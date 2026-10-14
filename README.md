@@ -7,6 +7,17 @@
 
 # MCP Server for Splunk
 
+> [!IMPORTANT]
+> **Stability AI fork.** This is [Stability-AI/mcp-for-splunk](https://github.com/Stability-AI/mcp-for-splunk), a fork of [deslicer/mcp-for-splunk](https://github.com/deslicer/mcp-for-splunk). Stability AI builds its `splunk-mcp` image from this repo (containers-infra `splunk-mcp/`, deployed by kubernetes-infra `configs/splunk-mcp/`).
+>
+> **Changes on top of upstream** (keep this list current; each change should also go upstream so the fork can shrink back to zero):
+>
+> | Change | Why | Upstream status |
+> |---|---|---|
+> | `SPLUNK_SEARCH_MAX_TIME` env var: passes Splunk `max_time` to jobs started by `run_oneshot_search` and `run_splunk_search` (`src/core/splunk_job_results_page.py`) | An unbounded `index=*` search held the server for minutes on 2026-10-13. A cap stops runaway searches on the search head. | Not yet proposed |
+>
+> **Syncing:** fetch `deslicer/mcp-for-splunk` `main`, rebase this fork's commits onto it, and rerun `uv run pytest -q`.
+
 [![FastMCP](https://img.shields.io/badge/FastMCP-2.13.0.2%2B-blue)](https://gofastmcp.com/)
 [![Python](https://img.shields.io/badge/Python-3.10+-green)](https://python.org)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue)](https://docker.com)
