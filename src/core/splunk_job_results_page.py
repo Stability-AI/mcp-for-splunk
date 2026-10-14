@@ -1,6 +1,7 @@
 """Page results from a completed Splunk search job."""
 
 import logging
+import os
 from dataclasses import dataclass
 from typing import Any
 
@@ -15,7 +16,26 @@ from src.core.list_paging import (
 
 SEARCH_PAGE_MAX = 100
 JOB_TTL_SECONDS = 1800
+SEARCH_MAX_TIME_ENV = "SPLUNK_SEARCH_MAX_TIME"
 logger = logging.getLogger(__name__)
+
+
+def search_time_limit_kwargs() -> dict[str, int]:
+    """Splunk ``max_time`` for new search jobs, read from SPLUNK_SEARCH_MAX_TIME.
+
+    The value is in seconds; Splunk finalizes the job when it is reached and
+    keeps the results gathered so far. Unset, empty, non-positive or
+    non-integer values mean no limit.
+    """
+    raw = os.getenv(SEARCH_MAX_TIME_ENV, "").strip()
+    if not raw:
+        return {}
+    try:
+        seconds = int(raw)
+    except ValueError:
+        logger.warning("Ignoring %s=%r: not an integer", SEARCH_MAX_TIME_ENV, raw)
+        return {}
+    return {"max_time": seconds} if seconds > 0 else {}
 
 
 def apply_job_ttl(job: Any, ttl_seconds: int = JOB_TTL_SECONDS) -> None:
