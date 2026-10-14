@@ -16,6 +16,7 @@ from src.core.splunk_job_results_page import (
     JobResultsError,
     apply_job_ttl,
     fetch_job_results_page,
+    search_time_limit_kwargs,
 )
 from src.core.splunk_job_wait import resolve_search_wait_seconds, wait_for_job
 from src.core.splunk_web_urls import web_links_from_service
@@ -93,7 +94,11 @@ class JobSearch(BaseTool):
         try:
             start_time = time.time()
             job = await asyncio.to_thread(
-                service.jobs.create, query, earliest_time=earliest_time, latest_time=latest_time
+                service.jobs.create,
+                query,
+                earliest_time=earliest_time,
+                latest_time=latest_time,
+                **search_time_limit_kwargs(),
             )
             apply_job_ttl(job, JOB_TTL_SECONDS)
             await ctx.info(f"Search job created: {job.sid}")

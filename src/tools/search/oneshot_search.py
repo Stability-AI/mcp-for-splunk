@@ -16,6 +16,7 @@ from src.core.splunk_job_results_page import (
     JobResultsError,
     apply_job_ttl,
     fetch_job_results_page,
+    search_time_limit_kwargs,
 )
 from src.core.splunk_web_urls import web_links_from_service
 from src.core.utils import log_tool_execution, sanitize_search_query
@@ -34,6 +35,7 @@ def _create_blocking_job(
         latest_time=latest_time,
         exec_mode="blocking",
         adhoc_search_level="smart",
+        **search_time_limit_kwargs(),
     )
     apply_job_ttl(job, JOB_TTL_SECONDS)
     return job

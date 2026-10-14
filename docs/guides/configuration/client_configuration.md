@@ -488,6 +488,8 @@ Catalog lists default to 50 rows (max 200). Search results default to 50 (max 10
 
 `run_splunk_search` waits up to `MCP_SEARCH_WAIT_SECONDS` (default 15) then returns `job_id` even if Splunk is still running. When `is_done` is false, poll `get_search_job_info`, then `get_search_job_results`.
 
+Set `SPLUNK_SEARCH_MAX_TIME` (seconds) to cap how long Splunk runs the jobs that `run_oneshot_search` and `run_splunk_search` start. It is passed as Splunk's `max_time`: the job is finalized at the limit and keeps the results found so far. Unset, `0` or non-integer values mean no cap.
+
 When a completed search returns `has_more`, call `get_search_job_results` with the same `job_id` and `offset=next_offset`. The job is kept so page 2 does not rerun SPL.
 
 ## 🔒 **Security Considerations**
